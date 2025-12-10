@@ -1,8 +1,7 @@
 "use client";
 
 import { ITask } from "@/types/tasks";
-import { FiEdit } from "react-icons/fi";
-import { FaRegTrashAlt } from "react-icons/fa";
+import { EditIcon, TrashIcon } from "./Icons";
 import { FormEventHandler, useState } from "react";
 import Modal from "@/components/Modal";
 import { useRouter } from "next/navigation";
@@ -60,7 +59,7 @@ const Task: React.FC<TaskProps> = ({ task }) => {
           onClick={() => setOpenModalEdit(true)}
           style={{ cursor: "pointer" }}
         >
-          <FiEdit color="blue" size={25} />
+          <EditIcon color="blue" size={25} />
         </span>
         <Modal modalOpen={openModalEdit} setModalOpen={setOpenModalEdit}>
           <form onSubmit={handleSubmitEditTodo}>
@@ -85,7 +84,7 @@ const Task: React.FC<TaskProps> = ({ task }) => {
           onClick={() => setOpenModalDeleted(true)}
           style={{ cursor: "pointer" }}
         >
-          <FaRegTrashAlt color="red" size={25} />
+          <TrashIcon color="red" size={25} />
         </span>
         <Modal modalOpen={openModalDeleted} setModalOpen={setOpenModalDeleted}>
           <h3 className="text-lg">

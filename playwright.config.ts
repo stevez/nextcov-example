@@ -1,27 +1,9 @@
 import { defineConfig, devices } from "@playwright/test";
-import { CoverageReportOptions } from "monocart-reporter";
+import type { NextcovConfig } from "nextcov";
 
-const coverageReportOptions: CoverageReportOptions = {
-  // logging: 'debug',
-  name: "Todo-App Istanbul Coverage Report",
-  outputDir: "./coverage/integration",
-  reports: [["lcov"], ["json"], ["text"], ["text-summary"]],
-
-  all: {
-    dir: ["./src"],
-    filter: {
-      "**/__tests__/**": false,
-      '**/types/**': false,
-      "**/*.tsx": true,
-      "**/*.ts": true,
-    },
-  },
-};
-
-const monocartReportOptions = {
-  name: "todo-app Playwright Integration Test Report",
-  outputFile: "./test-results/report.html",
-  coverage: coverageReportOptions,
+// Extend Playwright config type to include nextcov
+type PlaywrightConfigWithNextcov = Parameters<typeof defineConfig>[0] & {
+  nextcov?: NextcovConfig;
 };
 
 /**
@@ -44,7 +26,18 @@ const monocartReportOptions = {
 
 */
 
-export default defineConfig({
+// Nextcov configuration - exported separately since defineConfig strips unknown properties
+export const nextcov: NextcovConfig = {
+  cdpPort: 9230,
+  buildDir: "dist",
+  outputDir: "./coverage/integration",
+  sourceRoot: "./src",
+  include: ["src/app/**/*.{ts,tsx}", "src/api/**/*.{ts,tsx}"],
+  exclude: ["src/**/__tests__/**", "src/**/*.test.{ts,tsx}", "src/types/**"],
+  reporters: ["html", "lcov", "json", "text-summary"],
+};
+
+const config: PlaywrightConfigWithNextcov = {
   testDir: "./e2e",
 
   /* Run tests in files in parallel */
@@ -63,9 +56,11 @@ export default defineConfig({
 
   workers: process.env.CI ? 1 : undefined,
 
-  globalTeardown: "./global-teardown.js",
+  globalSetup: "./e2e/global-setup.ts",
+  globalTeardown: "./e2e/global-teardown.ts",
 
-  reporter: [["list"], ["monocart-reporter", monocartReportOptions]],
+  outputDir: "./playwright-results",
+  reporter: [["list"], ["html", { outputFolder: "./playwright-report" }]],
 
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
 
@@ -87,4 +82,8 @@ export default defineConfig({
       use: { ...devices["Desktop Chrome"] },
     },
   ],
-});
+
+  nextcov,
+};
+
+export default defineConfig(config);

@@ -1,6 +1,6 @@
 "use client";
 
-import { AiOutlinePlus } from "react-icons/ai";
+import { PlusIcon } from "./Icons";
 import Modal from "@/components/Modal";
 import { FormEventHandler, useState } from "react";
 import { addTodo } from "@/api/api";
@@ -31,7 +31,7 @@ const AddTask = () => {
       >
         Add New Task
         <div className="ml-2">
-          <AiOutlinePlus size={18} />
+          <PlusIcon size={18} />
         </div>
       </button>
       <Modal modalOpen={modalOpen} setModalOpen={setModalOpen}>
