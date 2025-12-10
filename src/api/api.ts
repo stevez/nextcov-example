@@ -14,21 +14,21 @@ const getPrallelIndex = async () => {
 export const getHeaders: () => Promise<HeadersInit> = async () => {
   const headers = new Headers();
   headers.set("Content-Type", "application/json");
-  
+
   const parallelIndex = await getPrallelIndex() ?? "0";
   headers.set("x-parallel-index", parallelIndex);
-  
+
   return headers;
 }
-export const getAllTodos = async (): Promise<ITask[]> => {
+export async function getAllTodos(): Promise<ITask[]> {
   const res = await fetch(`${baseUrl}/tasks`, {
-    method: "GET", 
+    method: "GET",
     headers: await getHeaders(),
     cache: "no-store"
   });
   const todos = await res.json();
   return todos;
-};
+}
 
 //add task
 export const addTodo = async (todo: ITask): Promise<ITask> => {

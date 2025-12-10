@@ -47,3 +47,8 @@ node_modules/
 
 dist/
 coverage/
+.claude/
+**/__screenshots__/
+playwright-results/
+.yalc/
+yalc.lock

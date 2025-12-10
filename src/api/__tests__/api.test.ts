@@ -1,18 +1,19 @@
+import { describe, it, expect, vi, beforeEach, afterEach, Mock } from 'vitest';
 import { getAllTodos, addTodo, editTodo, deleteTodo, getHeaders } from '../api';
 
-jest.mock('next/headers');
+vi.mock('next/headers');
 import { headers } from 'next/headers';
 
-global.fetch = jest.fn();
+global.fetch = vi.fn();
 
 describe('API functions', () => {
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('with x-parallel-index header', () => {
     beforeEach(() => {
-      (headers as jest.Mock).mockReturnValue({
+      (headers as Mock).mockReturnValue({
         get: (key: string) => {
           if (key === 'x-parallel-index') {
             return '1';
@@ -24,7 +25,7 @@ describe('API functions', () => {
 
     describe('getAllTodos', () => {
       it('should return a list of todos', async () => {
-        (fetch as jest.Mock).mockResolvedValueOnce({
+        (fetch as Mock).mockResolvedValueOnce({
           json: () => Promise.resolve([{ id: '1', text: 'Test task' }]),
         } as Response);
 
@@ -41,7 +42,7 @@ describe('API functions', () => {
     describe('addTodo', () => {
       it('should add a new todo', async () => {
         const newTodo = { id: '2', text: 'New task' };
-        (fetch as jest.Mock).mockResolvedValueOnce({
+        (fetch as Mock).mockResolvedValueOnce({
           json: () => Promise.resolve(newTodo),
         } as Response);
 
@@ -58,7 +59,7 @@ describe('API functions', () => {
     describe('editTodo', () => {
       it('should edit an existing todo', async () => {
         const updatedTodo = { id: '1', text: 'Updated task' };
-        (fetch as jest.Mock).mockResolvedValueOnce({
+        (fetch as Mock).mockResolvedValueOnce({
           json: () => Promise.resolve(updatedTodo),
         } as Response);
 
@@ -74,7 +75,7 @@ describe('API functions', () => {
 
     describe('deleteTodo', () => {
       it('should delete an existing todo', async () => {
-        (fetch as jest.Mock).mockResolvedValueOnce({} as Response);
+        (fetch as Mock).mockResolvedValueOnce({} as Response);
 
         await deleteTodo('1');
         expect(fetch).toHaveBeenCalledWith('http://localhost:3001/tasks/1', {
@@ -94,7 +95,7 @@ describe('API functions', () => {
 
   describe('without x-parallel-index header', () => {
     beforeEach(() => {
-      (headers as jest.Mock).mockReturnValue({
+      (headers as Mock).mockReturnValue({
         get: () => {
           return null;
         },
@@ -109,7 +110,7 @@ describe('API functions', () => {
 
   describe('with empty x-parallel-index header', () => {
     beforeEach(() => {
-      (headers as jest.Mock).mockReturnValue({
+      (headers as Mock).mockReturnValue({
         get: (key: string) => {
           if (key === 'x-parallel-index') {
             return '';
