@@ -56,7 +56,6 @@ const config: PlaywrightConfigWithNextcov = {
 
   workers: process.env.CI ? 1 : undefined,
 
-  globalSetup: "./e2e/global-setup.ts",
   globalTeardown: "./e2e/global-teardown.ts",
 
   outputDir: "./playwright-results",
