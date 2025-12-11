@@ -91,4 +91,35 @@ test.describe("ToDo App", () => {
                 .getByRole("checkbox")
         ).toBeChecked();
     });
+
+    test("delete all tasks shows empty state", async ({ page }) => {
+        await page.goto("/");
+
+        // Delete all 4 tasks one by one to trigger client-side empty state
+        const taskNames = [
+            "HackerRank Problem solving",
+            "Join the progress review",
+            "write an article",
+            "Monthly presentation",
+        ];
+
+        for (const taskName of taskNames) {
+            // Click delete icon for the task
+            await page
+                .getByRole("row", { name: taskName })
+                .getByRole("img")
+                .nth(1)
+                .click();
+            // Confirm deletion
+            await page
+                .getByRole("row", { name: taskName })
+                .getByRole("button", { name: "Yes" })
+                .click();
+            // Wait for task to be removed
+            await expect(page.getByText(taskName)).not.toBeVisible();
+        }
+
+        // Now the empty state should be visible (client-side render)
+        await expect(page.getByText("No task")).toBeVisible();
+    });
 });
