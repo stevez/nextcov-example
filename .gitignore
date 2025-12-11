@@ -52,3 +52,4 @@ coverage/
 playwright-results/
 .yalc/
 yalc.lock
+.v8-coverage/
