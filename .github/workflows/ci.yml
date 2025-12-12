@@ -20,11 +20,13 @@ jobs:
     - name: run unit tests
       run: npm test
     - name: run local build
-      run: npm run build:local     
-    - name: Run Playwright integration tests
+      run: npm run build:local
+    - name: Run Playwright integration tests (production mode)
       run: npm run integration-test
     - name: run merge coverage
       run: npm run coverage:merge
+    - name: Run Playwright integration tests (dev mode)
+      run: npm run integration-test:dev
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:

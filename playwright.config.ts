@@ -35,7 +35,7 @@ export const nextcov: NextcovConfig = {
   include: ["src/app/**/*.{ts,tsx}", "src/api/**/*.{ts,tsx}"],
   exclude: ["src/**/__tests__/**", "src/**/*.test.{ts,tsx}", "src/types/**"],
   reporters: ["html", "lcov", "json", "text-summary"],
-  log: false,
+  log: true,
 };
 
 const config: PlaywrightConfigWithNextcov = {
@@ -68,7 +68,7 @@ const config: PlaywrightConfigWithNextcov = {
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
 
-    baseURL: "http://127.0.0.1:3000",
+    baseURL: "http://localhost:3000",
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
 
