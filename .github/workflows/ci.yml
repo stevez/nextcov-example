@@ -23,14 +23,10 @@ jobs:
       run: npm run build:local
     - name: Run Playwright integration tests (production mode)
       run: npm run integration-test
-    - name: Run Playwright integration tests (dev mode)
-      run: |
-        npm run mock &
-        npm run dev &
-        npx wait-on http://localhost:3000 http://localhost:3001
-        npm run playwright-test
     - name: run merge coverage
       run: npm run coverage:merge
+    - name: Run Playwright integration tests (dev mode)
+      run: npm run integration-test:dev
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
