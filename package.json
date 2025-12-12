@@ -26,7 +26,7 @@
     "coverage:merge": "npx ts-node --esm scripts/merge-coverage.ts"
   },
   "dependencies": {
-    "next": "^16.0.10",
+    "next": "^15.5.9",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.4.0",
