@@ -26,7 +26,7 @@
     "lcov:integration": "open-cli coverage/integration/lcov-report/index.html",
     "lcov": "open-cli coverage/lcov-report/index.html",
     "lcov:merged": "open-cli coverage/merged/index.html",
-    "coverage:merge": "npx nextcov merge coverage/unit coverage/integration -o coverage/merged"
+    "coverage:merge": "node node_modules/nextcov/dist/cli.js merge coverage/unit coverage/integration -o coverage/merged"
   },
   "dependencies": {
     "next": "^15.5.9",
