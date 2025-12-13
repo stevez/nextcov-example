@@ -37,7 +37,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
-    "nextcov": "^0.5.1",
+    "nextcov": "^0.5.2",
     "@playwright/test": "^1.57.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
