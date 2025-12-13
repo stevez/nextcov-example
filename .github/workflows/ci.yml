@@ -24,7 +24,7 @@ jobs:
     - name: Run Playwright integration tests (production mode)
       run: npm run integration-test
     - name: run merge coverage
-      run: script -q -c "npm run coverage:merge" /dev/null
+      run: npm run coverage:merge 2>&1 | cat
     - name: Run Playwright integration tests (dev mode)
       run: npm run integration-test:dev
     - uses: actions/upload-artifact@v4
