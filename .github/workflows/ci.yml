@@ -12,7 +12,7 @@ jobs:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
       with:
-        node-version: lts/*
+        node-version: 22
     - name: Install dependencies
       run: npm ci
     - name: Install Playwright Browsers
@@ -24,7 +24,7 @@ jobs:
     - name: Run Playwright integration tests (production mode)
       run: npm run integration-test
     - name: run merge coverage
-      run: npm run coverage:merge
+      run: node node_modules/nextcov/dist/cli.js merge coverage/unit coverage/integration -o coverage/merged
     - name: Run Playwright integration tests (dev mode)
       run: npm run integration-test:dev
     - uses: actions/upload-artifact@v4
