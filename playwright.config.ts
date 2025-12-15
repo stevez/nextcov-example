@@ -35,7 +35,8 @@ export const nextcov: NextcovConfig = {
   include: ["src/app/**/*.{ts,tsx}", "src/api/**/*.{ts,tsx}"],
   exclude: ["src/**/__tests__/**", "src/**/*.test.{ts,tsx}", "src/types/**"],
   reporters: ["html", "lcov", "json", "text-summary"],
-  log: true,
+  log: false,
+  timing: true,
 };
 
 const config: PlaywrightConfigWithNextcov = {
