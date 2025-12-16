@@ -85,6 +85,22 @@ const config: PlaywrightConfigWithNextcov = {
     },
   ],
 
+  webServer: [
+    {
+      command: 'npm run mock',
+      port: 3001,
+      name: 'mock server',
+      reuseExistingServer: true,
+    },
+    {
+      command: 'npm run dev',
+      url: 'http://localhost:3000',
+      name: 'dev server',
+      timeout: 120 * 1000,
+      reuseExistingServer: true,
+    }
+  ],
+
   nextcov,
 };
 
