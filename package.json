@@ -4,16 +4,10 @@
   "private": true,
   "scripts": {
     "postinstall": "node scripts/patch-ps-tree.js",
-    "dev": "cross-env NODE_OPTIONS=--inspect=9230 next dev",
+    "dev": "next dev",
     "build": "next build",
-    "build:local": "rimraf dist && cross-env E2E_MODE=true next build",
     "start": "next start",
-    "start:local": "cross-env NODE_V8_COVERAGE=.v8-coverage NODE_OPTIONS=--inspect=9230 next start",
-    "start:integration": "concurrently \"npm run start:local\" \"npm run mock\"",
-    "start:integration:dev": "concurrently \"npm run dev\" \"npm run mock\"",
     "playwright-test": "playwright test",
-    "integration-test": "start-server-and-test 'npm run start:integration' http-get://localhost:3000 'npm run playwright-test'",
-    "integration-test:dev": "npm run playwright-test",
     "lint": "next lint",
     "mock": "nodemon --watch mock-data mock-data/server.js",
     "test": "npm run test:unit && npm run test:component",
@@ -23,11 +17,7 @@
     "test:component": "vitest run --config vitest.component.config.ts",
     "test:component:headed": "vitest --watch --config vitest.component.config.ts --browser.headless=false",
     "lcov:unit": "open-cli coverage/unit/lcov-report/index.html",
-    "lcov:component": "open-cli coverage/component/lcov-report/index.html",
-    "lcov:integration": "open-cli coverage/integration/lcov-report/index.html",
-    "lcov:merged": "open-cli coverage/merged/index.html",
-    "coverage:strip": "node scripts/strip-coverage-directives.js",
-    "coverage:merge": "npm run coverage:strip -- coverage/unit/coverage-final.json && npm run coverage:strip -- coverage/component/coverage-final.json && nextcov merge coverage/unit coverage/component coverage/integration -o coverage/merged"
+    "lcov:component": "open-cli coverage/component/lcov-report/index.html"
   },
   "dependencies": {
     "next": "^15.5.9",
@@ -50,8 +40,6 @@
     "@vitest/coverage-v8": "^4.0.15",
     "@vitest/ui": "^4.0.15",
     "autoprefixer": "^10.4.20",
-    "concurrently": "^9.1.2",
-    "cross-env": "^7.0.3",
     "daisyui": "^4.12.23",
     "endpoint-response-override": "^1.1.2",
     "eslint": "^9",
@@ -63,19 +51,11 @@
     "open-cli": "^8.0.0",
     "playwright": "^1.57.0",
     "postcss": "^8",
-    "rimraf": "^6.0.1",
-    "start-server-and-test": "^2.0.9",
     "tailwindcss": "^3.4.1",
     "ts-node": "^10.9.2",
     "typescript": "^5",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^4.0.15",
     "vitest-browser-react": "^2.0.2"
-  },
-  "browserslist": [
-    "chrome 111",
-    "edge 111",
-    "firefox 111",
-    "safari 16.4"
-  ]
+  }
 }

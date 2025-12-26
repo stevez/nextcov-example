@@ -1,10 +1,4 @@
 import { defineConfig, devices } from "@playwright/test";
-import type { NextcovConfig } from "nextcov";
-
-// Extend Playwright config type to include nextcov
-type PlaywrightConfigWithNextcov = Parameters<typeof defineConfig>[0] & {
-  nextcov?: NextcovConfig;
-};
 
 /**
 
@@ -26,20 +20,7 @@ type PlaywrightConfigWithNextcov = Parameters<typeof defineConfig>[0] & {
 
 */
 
-// Nextcov configuration - exported separately since defineConfig strips unknown properties
-export const nextcov: NextcovConfig = {
-  cdpPort: 9230,
-  buildDir: "dist", // Production build output directory
-  outputDir: "./coverage/integration",
-  sourceRoot: "./src",
-  include: ["src/app/**/*.{ts,tsx}", "src/api/**/*.{ts,tsx}"],
-  exclude: ["src/**/__tests__/**", "src/**/*.test.{ts,tsx}", "src/types/**"],
-  reporters: ["html", "lcov", "json", "text-summary"],
-  log: false,
-  timing: true,
-};
-
-const config: PlaywrightConfigWithNextcov = {
+export default defineConfig({
   testDir: "./e2e",
 
   /* Run tests in files in parallel */
@@ -57,9 +38,6 @@ const config: PlaywrightConfigWithNextcov = {
   /* Opt out of parallel tests on CI. */
 
   workers: process.env.CI ? 1 : undefined,
-
-  globalSetup: "./e2e/global-setup.ts",
-  globalTeardown: "./e2e/global-teardown.ts",
 
   outputDir: "./playwright-results",
   reporter: [["list"], ["html", { outputFolder: "./playwright-report" }]],
@@ -99,9 +77,5 @@ const config: PlaywrightConfigWithNextcov = {
       timeout: 120 * 1000,
       reuseExistingServer: true,
     }
-  ],
-
-  nextcov,
-};
-
-export default defineConfig(config);
+  ]
+});
