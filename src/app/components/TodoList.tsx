@@ -7,19 +7,6 @@ interface TodoListProps {
   tasks: ITask[];
 }
 const TodoList: React.FC<TodoListProps> = ({ tasks }) => {
-  const renderTasks = () => {
-    if (tasks.length > 0) {
-      return tasks.map((task) => (
-        <Task key={task.id} task={task} />
-      ));
-    }
-    return (
-      <tr>
-        <td colSpan={2} className="text-center">No task</td>
-      </tr>
-    );
-  };
-
   return (
     <div className="overflow-x-auto">
       <table className="table w-full">
@@ -31,7 +18,13 @@ const TodoList: React.FC<TodoListProps> = ({ tasks }) => {
           </tr>
         </thead>
         <tbody>
-          {renderTasks()}
+          {tasks.length > 0 ? tasks.map((task) => (
+            <Task key={task.id} task={task} />
+          ))
+            : <tr>
+              <td colSpan={2} className="text-center">No task</td>
+              </tr>
+          }
         </tbody>
       </table>
     </div>
