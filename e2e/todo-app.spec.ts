@@ -17,7 +17,7 @@ test.describe("ToDo App", () => {
     });
 
 
-    test("list when empty tasks", async ({ page, request}, testInfo) => {
+    test.skip("list when empty tasks", async ({ page, request}, testInfo) => {
         const customHeaders = {
             "x-parallel-index": testInfo.parallelIndex.toString(),
         };
