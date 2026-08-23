@@ -1,0 +1,32 @@
+diff --git a/node_modules/@vitest/coverage-v8/dist/provider.js b/node_modules/@vitest/coverage-v8/dist/provider.js
+index ec0dd3e..14ea563 100644
+--- a/node_modules/@vitest/coverage-v8/dist/provider.js
++++ b/node_modules/@vitest/coverage-v8/dist/provider.js
+@@ -252,6 +252,11 @@ class V8CoverageProvider extends BaseCoverageProvider {
+ 		};
+ 		const scriptCoverages = [];
+ 		for (const result of coverage.result) {
++			// [patched] Skip virtual/non-file URLs (e.g. about:/React/Server/...
++			// injected by vitest-plugin-rsc). fileURLToPath throws on them.
++			if (result.url.startsWith("about:") || result.url.startsWith("data:") || result.url.startsWith("blob:")) {
++				continue;
++			}
+ 			if (environment === "__browser__") {
+ 				if (result.url.startsWith("/@fs")) {
+ 					result.url = `${FILE_PROTOCOL}${removeStartsWith(result.url, "/@fs")}`;
+@@ -261,7 +266,14 @@ class V8CoverageProvider extends BaseCoverageProvider {
+ 					result.url = `${FILE_PROTOCOL}${project.config.root}${result.url}`;
+ 				}
+ 			}
+-			if (this.isIncluded(fileURLToPath(result.url))) {
++			// [patched] Extra safety: swallow any leftover malformed URLs.
++			let filePath;
++			try {
++				filePath = fileURLToPath(result.url);
++			} catch {
++				continue;
++			}
++			if (this.isIncluded(filePath)) {
+ 				scriptCoverages.push({
+ 					...result,
+ 					url: decodeURIComponent(result.url)
