@@ -1,4 +1,4 @@
-name: Reproduce coverage-v8 non-file URL crash
+name: Coverage-v8 non-file URL — cross-OS behavior matrix
 on:
   push:
     branches: [rsc-poc-repro]
@@ -26,17 +26,27 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install chromium
 
-      - name: Run RSC component tests (expected to crash)
+      - name: Run RSC component tests
         id: rsc
         continue-on-error: true
         run: npm run test:component:rsc
 
-      - name: Assert the run crashed
+      - name: Verify platform behavior matches expectations
         shell: bash
         run: |
-          if [ "${{ steps.rsc.outcome }}" != "failure" ]; then
-            echo "::error::Expected coverage-v8 to crash on non-file URLs, but the run succeeded."
-            echo "The upstream bug may have been fixed in @vitest/coverage-v8 already."
+          case "${{ matrix.os }}" in
+            windows-latest)
+              expected="failure"   # Windows: fileURLToPath throws ERR_INVALID_FILE_URL_PATH
+              label="hard crash"
+              ;;
+            *)
+              expected="success"   # POSIX: fileURLToPath returns garbage silently, run exits 0
+              label="silent misroute (no crash)"
+              ;;
+          esac
+          actual="${{ steps.rsc.outcome }}"
+          echo "OS=${{ matrix.os }}  expected=$expected  actual=$actual  behavior=\"$label\""
+          if [ "$actual" != "$expected" ]; then
+            echo "::error::Platform behavior deviated from documented expectation for ${{ matrix.os }}."
             exit 1
           fi
-          echo "Confirmed: @vitest/coverage-v8@5.0.0-beta.2 crashes on non-file URLs on ${{ matrix.os }}."
