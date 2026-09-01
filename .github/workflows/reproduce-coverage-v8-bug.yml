@@ -1,0 +1,46 @@
+name: Reproduce coverage-v8 non-file URL crash
+on:
+  push:
+    branches: [rsc-poc-repro]
+  workflow_dispatch:
+
+jobs:
+  reproduce:
+    name: crash on ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Remove upstream fix patch to expose the bug
+        shell: bash
+        run: rm 'patches/@vitest+coverage-v8+5.0.0-beta.2.patch'
+
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps --no-audit --no-fund
+
+      - name: Install Playwright browsers
+        run: npx playwright install chromium
+
+      - name: Run RSC component tests (expected to crash)
+        id: rsc
+        continue-on-error: true
+        run: npm run test:component:rsc
+
+      - name: Assert the run crashed
+        shell: bash
+        run: |
+          if [ "${{ steps.rsc.outcome }}" != "failure" ]; then
+            echo "::error::Expected coverage-v8 to crash on non-file URLs, but the run succeeded."
+            echo "The upstream bug may have been fixed in @vitest/coverage-v8 already."
+            exit 1
+          fi
+          echo "Confirmed: @vitest/coverage-v8@5.0.0-beta.2 crashes on non-file URLs on ${{ matrix.os }}."
