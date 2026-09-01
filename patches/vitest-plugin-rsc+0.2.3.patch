@@ -1,0 +1,12 @@
+diff --git a/node_modules/vitest-plugin-rsc/dist/nextjs/testing-library.js b/node_modules/vitest-plugin-rsc/dist/nextjs/testing-library.js
+index a499092..c1140e2 100644
+--- a/node_modules/vitest-plugin-rsc/dist/nextjs/testing-library.js
++++ b/node_modules/vitest-plugin-rsc/dist/nextjs/testing-library.js
+@@ -26,6 +26,7 @@ async function buildFlightRouterStateWithNext(routePattern, pathname, search) {
+ 	const getDynamicParamFromSegment = createGetDynamicParamFromSegment(routePattern, pathname);
+ 	const searchParams = Object.fromEntries(new URLSearchParams(search));
+ 	const createFlightRouterState = createFlightRouterStateFromLoaderTree;
++	if (createFlightRouterState.length >= 9) return createFlightRouterState(loaderTree, null, false, false, false, false, false, getDynamicParamFromSegment, searchParams);
+ 	if (createFlightRouterState.length >= 8) return createFlightRouterState(loaderTree, null, false, false, false, false, getDynamicParamFromSegment, searchParams);
+ 	if (createFlightRouterState.length >= 4) return createFlightRouterState(loaderTree, null, getDynamicParamFromSegment, searchParams);
+ 	return createFlightRouterState(loaderTree, getDynamicParamFromSegment, searchParams);
