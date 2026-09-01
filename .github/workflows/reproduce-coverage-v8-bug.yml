@@ -20,10 +20,6 @@ jobs:
         with:
           node-version: 20
 
-      - name: Remove upstream fix patch to expose the bug
-        shell: bash
-        run: rm 'patches/@vitest+coverage-v8+5.0.0-beta.2.patch'
-
       - name: Install dependencies
         run: npm install --legacy-peer-deps --no-audit --no-fund
 
