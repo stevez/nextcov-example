@@ -31,6 +31,52 @@ jobs:
         continue-on-error: true
         run: npm run test:component:rsc
 
+      - name: Inspect coverage output
+        shell: bash
+        if: always()
+        run: |
+          echo "=== coverage/ tree ==="
+          if [ -d coverage ]; then
+            find coverage -type f | head -50
+          else
+            echo "(no coverage/ directory — report never written)"
+          fi
+
+          echo ""
+          echo "=== coverage-final.json summary ==="
+          f="coverage/component/coverage-final.json"
+          if [ -f "$f" ]; then
+            size=$(wc -c < "$f")
+            keys=$(node -e "const j=require('./'+process.argv[1]); console.log(Object.keys(j).length)" "$f")
+            echo "file: $f  size=${size}B  entries=${keys}"
+
+            echo ""
+            echo "--- entries with 'virtual' in the key ---"
+            node -e "const j=require('./'+process.argv[1]); for (const k of Object.keys(j)) if (k.includes('virtual')) console.log(JSON.stringify(k))" "$f" || true
+
+            echo ""
+            echo "--- entries containing a NUL byte in the key ---"
+            node -e "const j=require('./'+process.argv[1]); for (const k of Object.keys(j)) if (k.includes('\u0000')) console.log(JSON.stringify(k))" "$f" || true
+
+            echo ""
+            echo "--- entries whose key is NOT an absolute file path ---"
+            node -e "const j=require('./'+process.argv[1]); const path=require('path'); for (const k of Object.keys(j)) if (!path.isAbsolute(k) || k.startsWith('\u0000') || k.includes('://')) console.log(JSON.stringify(k))" "$f" || true
+
+            echo ""
+            echo "--- first 5 keys (sample) ---"
+            node -e "const j=require('./'+process.argv[1]); console.log(Object.keys(j).slice(0,5).map(k=>JSON.stringify(k)).join('\n'))" "$f" || true
+          else
+            echo "(no coverage-final.json — either the run crashed before writing it, or the report path differs)"
+          fi
+
+      - name: Upload coverage artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ matrix.os }}
+          path: coverage/
+          if-no-files-found: warn
+
       - name: Verify platform behavior matches expectations
         shell: bash
         run: |
