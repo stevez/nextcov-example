@@ -43,12 +43,16 @@ This project uses a **three-tier testing strategy** with **[Vitest](https://vite
 | **Component** | Real browser (Playwright) | UI components, interactions | React components, browser APIs |
 | **Integration** | Full Next.js server | User flows, pages | Server components, SSR |
 
+Unit and component tests are two [Vitest projects](https://vitest.dev/guide/projects) in a single `vitest.config.ts`. One `vitest run` executes both and Vitest merges their coverage into `coverage/vitest`.
+
+> Use Vitest 5.1.1+ so `@vitest/istanbul-lib-coverage` 2.1.1 is installed. It fixes statements being counted twice when coverage from jsdom and browser projects is merged ([vitest-dev/vitest#12040](https://github.com/vitest-dev/vitest/pull/12040)).
+
 ### Unit Tests (Vitest + jsdom)
 
 Fast unit tests running in jsdom environment for utilities and hooks.
 
 ```bash
-# Run unit tests with coverage
+# Run only the unit project
 npm run test:unit
 
 # Run tests in watch mode
@@ -58,25 +62,20 @@ npm run test:watch
 npm run test:unit:ui
 ```
 
-Coverage output: `./coverage/unit`
-
-View report: `npm run lcov:unit`
 
 ### Component Tests (Vitest + Playwright Browser)
 
 Real browser tests using Vitest browser mode with Playwright. Components render in an actual browser with real DOM APIs, CSS, and user interactions.
 
 ```bash
-# Run component tests (headless)
+# Run only the component project (headless)
 npm run test:component
 
 # Run with visible browser for debugging
 npm run test:component:headed
 ```
 
-Coverage output: `./coverage/component`
-
-View report: `npm run lcov:component`
+Running a single project writes coverage for that project only. Use `npm test` to get the combined unit + component report in `./coverage/vitest` (`npm run lcov:vitest`).
 
 ### Integration Tests (Playwright)
 
@@ -106,7 +105,7 @@ View report: `npm run lcov:integration`
 This project uses **[nextcov](https://www.npmjs.com/package/nextcov)** to collect V8 coverage from all three test types and merge them into a unified report.
 
 ```bash
-# Run all tests (unit + component)
+# Run unit + component projects in one Vitest run
 npm test
 
 # Run integration tests (see steps above)
@@ -116,8 +115,7 @@ npm run coverage:merge
 ```
 
 **Coverage Output:**
-- Unit test coverage: `coverage/unit/`
-- Component test coverage: `coverage/component/`
+- Unit + component coverage (merged by Vitest): `coverage/vitest/`
 - Integration test coverage: `coverage/integration/`
 - Merged coverage: `coverage/merged/` (HTML report at `coverage/merged/index.html`)
 
@@ -159,11 +157,11 @@ The strip script ensures apples-to-apples comparison when merging.
 - `npm run mock` - Start json-server mock API
 
 ### Testing
-- `npm test` - Run unit + component tests with coverage
-- `npm run test:unit` - Run unit tests only (jsdom)
-- `npm run test:unit:ui` - Run unit tests with Vitest UI dashboard
-- `npm run test:watch` - Run unit tests in watch mode
-- `npm run test:component` - Run component tests (browser)
+- `npm test` - Run unit + component projects with merged coverage
+- `npm run test:unit` - Run the unit project only (jsdom)
+- `npm run test:unit:ui` - Run the unit project with Vitest UI dashboard
+- `npm run test:watch` - Run all projects in watch mode
+- `npm run test:component` - Run the component project only (browser)
 - `npm run test:component:headed` - Run component tests with visible browser
 
 ### Integration Testing
@@ -175,8 +173,7 @@ The strip script ensures apples-to-apples comparison when merging.
 ### Coverage
 - `npm run coverage:strip` - Normalize coverage data
 - `npm run coverage:merge` - Merge all coverage sources
-- `npm run lcov:unit` - Open unit coverage report
-- `npm run lcov:component` - Open component coverage report
+- `npm run lcov:vitest` - Open unit + component coverage report
 - `npm run lcov:integration` - Open integration coverage report
 - `npm run lcov:merged` - Open merged coverage report
 
@@ -193,10 +190,9 @@ The strip script ensures apples-to-apples comparison when merging.
 
 The GitHub Actions workflow runs all tests and merges coverage:
 
-1. Run unit tests (`npm run test:unit`)
-2. Run component tests (`npm run test:component`)
-3. Build for integration testing (`npm run build:local`)
-4. Run integration tests (`npm run integration-test`)
-5. Merge all coverage (`npm run coverage:merge`)
+1. Run unit + component tests (`npm test`)
+2. Build for integration testing (`npm run build:local`)
+3. Run integration tests (`npm run integration-test`)
+4. Merge Vitest and integration coverage (`npm run coverage:merge`)
 
 See [.github/workflows/ci.yml](.github/workflows/ci.yml) for details.
